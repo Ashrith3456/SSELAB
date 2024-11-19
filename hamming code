@@ -1,44 +1,36 @@
+
 public class HammingCode {
- public static int[] encode(int[] data) {
- int[] encoded = new int[7];
- encoded[2] = data[0];
- encoded[4] = data[1];
- encoded[5] = data[2];
- encoded[6] = data[3];
- encoded[0] = encoded[2] ^ encoded[4] ^ encoded[6]; // p1
- encoded[1] = encoded[2] ^ encoded[5] ^ encoded[6]; // p2
- encoded[3] = encoded[4] ^ encoded[5] ^ encoded[6]; // p3
- return encoded;
- }
- public static int[] decode(int[] encoded) {
- int p1 = encoded[0] ^ encoded[2] ^ encoded[4] ^ encoded[6];
- int p2 = encoded[1] ^ encoded[2] ^ encoded[5] ^ encoded[6];
- int p3 = encoded[3] ^ encoded[4] ^ encoded[5] ^ encoded[6];
- int errorPosition = p1 * 1 + p2 * 2 + p3 * 4;
- if (errorPosition != 0) {
- System.out.println("Error detected at position: " + errorPosition);
- encoded[errorPosition - 1] = encoded[errorPosition - 1] == 0 ? 1 : 0;
- System.out.println("Error corrected.");
- } else {
- System.out.println("No error detected.");
- }
- int[] data = {encoded[2], encoded[4], encoded[5], encoded[6]};
- return data;
- }
- public static void main(String[] args) {
-nt[] data = {1, 0, 1, 1};
- int[] encodedData = encode(data);
- System.out.print("Encoded data: ");
- for (int bit : encodedData) {
- System.out.print(bit + " ");
- }
- System.out.println();
- encodedData[2] = encodedData[2] == 0 ? 1 : 0;
- int[] decodedData = decode(encodedData);
- System.out.print("Decoded data: ");
- for (int bit : decodedData) {
- System.out.print(bit + " ");
- }
- System.out.println();
- }
+    
+    public static int[] encode(int[] data) {
+        int[] encoded = new int[7];
+        encoded[2] = data[0]; encoded[4] = data[1]; encoded[5] = data[2]; encoded[6] = data[3];
+        encoded[0] = encoded[2] ^ encoded[4] ^ encoded[6];
+        encoded[1] = encoded[2] ^ encoded[5] ^ encoded[6];
+        encoded[3] = encoded[4] ^ encoded[5] ^ encoded[6];
+        return encoded;
+    }
+
+    public static int[] decode(int[] encoded) {
+        int p1 = encoded[0] ^ encoded[2] ^ encoded[4] ^ encoded[6];
+        int p2 = encoded[1] ^ encoded[2] ^ encoded[5] ^ encoded[6];
+        int p3 = encoded[3] ^ encoded[4] ^ encoded[5] ^ encoded[6];
+        int errorPos = p1 + (p2 * 2) + (p3 * 4);
+
+        if (errorPos != 0) encoded[errorPos - 1] ^= 1; // Correct the error
+        return new int[] { encoded[2], encoded[4], encoded[5], encoded[6] };
+    }
+
+    public static void main(String[] args) {
+        int[] data = { 1, 0, 1, 1 };
+        int[] encodedData = encode(data);
+
+        System.out.print("Encoded data: ");
+        for (int bit : encodedData) System.out.print(bit + " ");
+        
+        encodedData[2] ^= 1; // Simulate an error
+
+        int[] decodedData = decode(encodedData);
+        System.out.print("\nDecoded data: ");
+        for (int bit : decodedData) System.out.print(bit + " ");
+    }
 }
